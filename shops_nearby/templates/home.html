@@ -1,0 +1,40 @@
+{% extends "base_generic.html" %}
+<body>
+<br>
+<div class="container">
+  <div class="layout col-view">
+{% block content %}
+<h1><em><font color="blue"><b>Local Shops Home</b></font></em></h1>
+
+  <p>Welcome to <em>LocalShops</em>, a very basic Django website developed as a chalange example that displays shops nearby.</p>
+
+
+    <h1><font color="red"><b>Shop List</b></font></h1>
+
+    {% if shop_list %}
+    <ul>
+
+      {% for shop in shop_list %}
+        {% if not shop in preferred_list %}
+      <li>
+        {% load staticfiles %}
+        <a><img src="{{shop.shop_pic}}" width ="240"></a> ({{shop.name}}) ({{shop.email}})
+      </li>
+        <a href="{% url 'change_preferred' operation='add' id=shop.id %}">
+        <button type="like" class="btn btn-success">Like</button>
+        </a>
+
+        {% endif%}
+
+      {% endfor %}
+
+    </ul>
+    {% else %}
+      <p>There are no shops in the catalog.</p>
+    {% endif %}
+
+<p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
+
+{% endblock %}
+</div>
+</div>
