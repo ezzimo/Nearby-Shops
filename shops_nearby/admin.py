@@ -36,7 +36,7 @@ class UserAdmin(DjangoUserAdmin):
 #admin.site.register(Shop)
 
 class ShopAdmin(admin.ModelAdmin):
-     list_display =('name', 'city', 'email', 'shop_pic', 'location')
+     list_display =('name', 'city', 'email', 'shop_pic')
      pass
 
 # Register the admin class wuth the model

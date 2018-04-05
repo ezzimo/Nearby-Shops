@@ -4,36 +4,52 @@
 <div class="container">
   <div class="layout col-view">
 {% block content %}
-<h1><em><font color="blue"><b>Local Shops Home</b></font></em></h1>
+<div id="Shops_app">
+    <h1><em><font color="blue"><b><p> [[ title ]] </p></b></font></em></h1>
+       <p>Welcome to <em>LocalShops</em>, a very basic Django website developed as a chalange example that displays shops nearby.</p>
 
-  <p>Welcome to <em>LocalShops</em>, a very basic Django website developed as a chalange example that displays shops nearby.</p>
 
+       <h1><font color="red"><b>Shop List</b></font></h1>
 
-    <h1><font color="red"><b>Shop List</b></font></h1>
+          {% if shop_list %}
+           <ul>
 
-    {% if shop_list %}
-    <ul>
+            {% for shop in shop_list %}
+             {% if not shop in preferred_list %}
+		            {% if not shop in disliked_list %}
+		              <li>
+		                  {% load staticfiles %}
+        			           <a><img src="{{shop.shop_pic}}" width ="240"></a> ({{shop.name}}) ({{shop.email}})
+		              </li>
+        			       <a href="{% url 'change_preferred' operation='add' id=shop.id %}">
+        			       <button type="like" class="btn btn-success">Like</button>
+        			       </a>
+				             <a href="{% url 'change_disliked' operation='add' id=shop.id %}">
+        			       <button type="Dislike" class="btn btn-danger">Dislike</button>
+        			       </a>
+		            {%endif%}
 
-      {% for shop in shop_list %}
-        {% if not shop in preferred_list %}
-      <li>
-        {% load staticfiles %}
-        <a><img src="{{shop.shop_pic}}" width ="240"></a> ({{shop.name}}) ({{shop.email}})
-      </li>
-        <a href="{% url 'change_preferred' operation='add' id=shop.id %}">
-        <button type="like" class="btn btn-success">Like</button>
-        </a>
+             {% endif%}
 
-        {% endif%}
+            {% endfor %}
 
-      {% endfor %}
+           </ul>
+          {% else %}
+            <p>There are no shops in the catalog.</p>
+          {% endif %}
 
-    </ul>
-    {% else %}
-      <p>There are no shops in the catalog.</p>
-    {% endif %}
+          <p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
+   </div>
+     <script>
+        new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#Shops_app',
+        data: {
+        title: 'Welcome to Local Shops Home'
+              }
+                })
+     </script>
 
-<p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
 
 {% endblock %}
 </div>

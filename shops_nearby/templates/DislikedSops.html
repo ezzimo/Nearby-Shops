@@ -1,20 +1,23 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-            <h1><em><font color="blue"><b>Preferred Shops</b></font></em></h1>
      {% if user.is_authenticated %}
-        {% if preferred_list %}
-          {% for shop in preferred_list %}
+                 <h1><em><font color="Green1"><b>Disliked Shops</b></font></em></h1>
+        {% if disliked_list %}
+          {% for shop in disliked_list %}
             <li>
                 {% load staticfiles %}
-                <a><img src="{{shop.shop_pic}}"></a> ({{shop.name}}) ({{shop.email}})
+                <a>{{shop.name}}</a>
             </li>
-              <a href="{% url 'change_preferred' operation='remove' id=shop.id %}">
+            <li>
+                <a><img src="{{shop.shop_pic}}"></a> <a> ({{shop.email}})</a>
+            </li>
+              <a href="{% url 'change_disliked' operation='remove' id=shop.id %}">
                 <button type="button" class="btn btn-danger">Remove</button>
               </a>
           {% endfor %}
         {% else %}
-            <p>There are no shops in the preferred shops.</p>
+            <p>There are no shops in the disliked shops.</p>
 
         {% endif %}
 

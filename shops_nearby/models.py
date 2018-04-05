@@ -56,13 +56,10 @@ class Shop(models.Model):
     shop_pic = models.ImageField(upload_to = 'pic_folder/', default = 'http://placehold.it/150x150', null= True)
     location = gis_models.PointField("longitude/latitude",
                                      geography=True, blank=False, null=True)
-    #gis = gis_models.GeoManager()
-
-
-
 
     def __unicode__(self):
         return self.name, 'maplocation'
+
 
 
 class User(AbstractUser):
@@ -72,9 +69,8 @@ class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
     location = models.CharField('Address',max_length=200, default='', blank=False)
     preferred = models.ManyToManyField(Shop, related_name='Preferred')
-    maplocation = gis_models.PointField("longitude/latitude",
-                                         geography=True, blank=False, null=True)
-    #gis = gis_models.GeoManager()
+    disliked = models.ManyToManyField(Shop, related_name='Disliked')
+    maplocation = gis_models.PointField("longitude/latitude", geography=True, blank=False, null=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
@@ -92,3 +88,17 @@ class User(AbstractUser):
             email=current_email
         )
         user.preferred.remove(pref_shop)
+
+    @classmethod
+    def make_dislike(cls, current_email, dislike_shop):
+        user, created = cls.objects.get_or_create(
+            email=current_email
+        )
+        user.disliked.add(dislike_shop)
+
+    @classmethod
+    def remove_dislike(cls, current_email, dislike_shop):
+        user, created = cls.objects.get_or_create(
+            email=current_email
+        )
+        user.disliked.remove(dislike_shop)

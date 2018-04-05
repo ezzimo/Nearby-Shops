@@ -12,17 +12,15 @@ from django.shortcuts import render, redirect
 
 # Create your views here.
 @login_required
-
 def home(request):
     """
     View function for home page of site.
 .order_by(distance)
     """
-    ref_pnt = User.maplocation
     shop_list = Shop.objects.all()
-
     user = User.objects.get(email=request.user)
     preferred_list = user.preferred.all()
+    disliked_list = user.disliked.all()
 
     # Number of visits to this view, as counted in the session variable.
     num_visits=request.session.get('num_visits', 0)
@@ -31,10 +29,10 @@ def home(request):
     return render(
         request,
         'home.html',
-        context={'num_visits':num_visits, 'shop_list':shop_list, 'preferred_list': preferred_list},
+        context={'num_visits':num_visits, 'shop_list':shop_list, 'preferred_list': preferred_list, 'disliked_list': disliked_list},
     )
 
-
+@login_required
 def favorites(request):
     """
     View of the preferred shop list
@@ -47,6 +45,21 @@ def favorites(request):
         context={'preferred_list': preferred_list},
     )
 
+@login_required
+def dislikes(request):
+    """
+    View of the disliked shop list
+    """
+    user = User.objects.get(email=request.user)
+    disliked_list = user.disliked.all()
+    return render(
+        request,
+        'DislikedSops.html',
+        context={'disliked_list': disliked_list},
+    )
+
+
+
 def change_preferred(request, operation, id):
     shop = Shop.objects.get(id=id)
     if operation == 'add':
@@ -55,6 +68,16 @@ def change_preferred(request, operation, id):
     elif operation == 'remove':
         User.remove_preferred(request.user, shop)
         return redirect('favorites')
+
+def change_disliked(request, operation, id):
+    shop = Shop.objects.get(id=id)
+    if operation == 'add':
+        User.make_dislike(request.user, shop)
+        return redirect('home')
+    elif operation == 'remove':
+        User.remove_dislike(request.user, shop)
+        return redirect('home')
+
 
 
 def signup(request):
