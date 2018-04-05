@@ -11,15 +11,15 @@
 
        <h1><font color="red"><b>Shop List</b></font></h1>
 
-          {% if shop_list %}
+          {% if shop_order %}
            <ul>
 
-            {% for shop in shop_list %}
+            {% for shop in shop_order %}
              {% if not shop in preferred_list %}
 		            {% if not shop in disliked_list %}
 		              <li>
 		                  {% load staticfiles %}
-        			           <a><img src="{{shop.shop_pic}}" width ="240"></a> ({{shop.name}}) ({{shop.email}})
+        			           <a><img src="{{shop.shop_pic}}" width ="240"></a> ({{shop.name}}) ({{shop.email}}) ({{shop.location}})
 		              </li>
         			       <a href="{% url 'change_preferred' operation='add' id=shop.id %}">
         			       <button type="like" class="btn btn-success">Like</button>

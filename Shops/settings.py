@@ -30,6 +30,15 @@ GDAL_LIBRARY_PATH = '/usr/local/lib/libgdal.so'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '=j-w_qz%-k2f3#)7*ahuh6!3@pdkv9v_a2_x3nx_jg&(^w_iv='
 GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyB-KCgS9jD6iR9wsn_akeGXYiOqf5UAVOc'
+MAP_WIDGETS = {
+    "GooglePointFieldWidget": (
+        ("zoom", 15),
+        ("mapCenterLocationName", "Rabat"),
+        ("GooglePlaceAutocompleteOptions", {'componentRestrictions': {'country': 'ma'}}),
+        ("markerFitZoom", 12),
+    ),
+    "GOOGLE_MAP_API_KEY": "<AIzaSyB-KCgS9jD6iR9wsn_akeGXYiOqf5UAVOc>"
+}
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -50,6 +59,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'rest_framework',
     'rest_framework_gis',
+    'django_google_maps',
 ]
 
 MIDDLEWARE = [

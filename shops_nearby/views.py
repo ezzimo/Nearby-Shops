@@ -6,21 +6,23 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.gis.db import models as gis_models
-from django.contrib.gis.measure import Distance
+from django.contrib.gis.db.models.functions import Distance as D
 from django.contrib.gis.geos import Point
 from django.shortcuts import render, redirect
+from django.contrib.gis.geos import *
 
 # Create your views here.
 @login_required
 def home(request):
     """
     View function for home page of site.
-.order_by(distance)
     """
     shop_list = Shop.objects.all()
     user = User.objects.get(email=request.user)
     preferred_list = user.preferred.all()
     disliked_list = user.disliked.all()
+    ref_location = user.maplocation
+    shop_order = Shop.objects.annotate(distance=D('location', ref_location)).order_by('distance')
 
     # Number of visits to this view, as counted in the session variable.
     num_visits=request.session.get('num_visits', 0)
@@ -29,7 +31,7 @@ def home(request):
     return render(
         request,
         'home.html',
-        context={'num_visits':num_visits, 'shop_list':shop_list, 'preferred_list': preferred_list, 'disliked_list': disliked_list},
+        context={'num_visits':num_visits, 'shop_list':shop_list, 'preferred_list': preferred_list, 'disliked_list': disliked_list, 'shop_order': shop_order, 'ref_location': ref_location},
     )
 
 @login_required

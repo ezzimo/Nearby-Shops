@@ -1,5 +1,5 @@
 from django.contrib.gis.db import models as gis_models
-from django.contrib.gis import geos
+from django.contrib.gis.geos import *
 from django.contrib.gis.measure import Distance
 from django.db import models
 import uuid # Required for unique shop
@@ -7,6 +7,7 @@ from django.urls import reverse #Used to generate URLs by reversing the URL patt
 from django.contrib.auth.models import AbstractUser, BaseUserManager ## A new class is imported. ##
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _ # for translation
+from django_google_maps import fields as map_fields
 
 """Declare models for Shops Nearby app."""
 class UserManager(BaseUserManager):
@@ -56,9 +57,10 @@ class Shop(models.Model):
     shop_pic = models.ImageField(upload_to = 'pic_folder/', default = 'http://placehold.it/150x150', null= True)
     location = gis_models.PointField("longitude/latitude",
                                      geography=True, blank=False, null=True)
+    #objects = gis_models.GeoManager()
 
     def __unicode__(self):
-        return self.name, 'maplocation'
+        return self.name, 'location'
 
 
 
@@ -67,10 +69,11 @@ class User(AbstractUser):
 
     username = None
     email = models.EmailField(_('email address'), unique=True)
-    location = models.CharField('Address',max_length=200, default='', blank=False)
+    location = map_fields.AddressField(max_length=200)
     preferred = models.ManyToManyField(Shop, related_name='Preferred')
     disliked = models.ManyToManyField(Shop, related_name='Disliked')
     maplocation = gis_models.PointField("longitude/latitude", geography=True, blank=False, null=True)
+    #objects = gis_models.GeoManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
