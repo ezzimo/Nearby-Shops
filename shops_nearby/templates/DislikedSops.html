@@ -1,20 +1,26 @@
 {% extends "base_generic.html" %}
-
 {% block content %}
+
+
+<!-- extenssion of the home page to display the disliked Nerby Shops list (disliked_list) by distance from the User location, and the button to remove shop from disliked list by calling change_disliked with operation 'remove' -->
+
+
+
+
+
      {% if user.is_authenticated %}
-                 <h1><em><font color="Green1"><b>Disliked Shops</b></font></em></h1>
         {% if disliked_list %}
           {% for shop in disliked_list %}
+          <div class="dis_container">
             <li>
                 {% load staticfiles %}
-                <a>{{shop.name}}</a>
-            </li>
-            <li>
-                <a><img src="{{shop.shop_pic}}"></a> <a> ({{shop.email}})</a>
-            </li>
+                {{shop.name}}<br>
+                <img src="{{shop.shop_pic}}" width ="240">
               <a href="{% url 'change_disliked' operation='remove' id=shop.id %}">
-                <button type="button" class="btn btn-danger">Remove</button>
+                <button id="remove_button" type="button" class="btn btn-danger">Remove</button>
               </a>
+            </li>
+          </div>
           {% endfor %}
         {% else %}
             <p>There are no shops in the disliked shops.</p>

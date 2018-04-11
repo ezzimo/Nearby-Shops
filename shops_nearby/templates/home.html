@@ -1,56 +1,37 @@
 {% extends "base_generic.html" %}
-<body>
-<br>
-<div class="container">
-  <div class="layout col-view">
 {% block content %}
-<div id="Shops_app">
-    <h1><em><font color="blue"><b><p> [[ title ]] </p></b></font></em></h1>
-       <p>Welcome to <em>LocalShops</em>, a very basic Django website developed as a chalange example that displays shops nearby.</p>
 
 
-       <h1><font color="red"><b>Shop List</b></font></h1>
-
-          {% if shop_order %}
-           <ul>
-
-            {% for shop in shop_order %}
-             {% if not shop in preferred_list %}
-		            {% if not shop in disliked_list %}
-		              <li>
-		                  {% load staticfiles %}
-        			           <a><img src="{{shop.shop_pic}}" width ="240"></a> ({{shop.name}}) ({{shop.email}}) ({{shop.location}})
-		              </li>
-        			       <a href="{% url 'change_preferred' operation='add' id=shop.id %}">
-        			       <button type="like" class="btn btn-success">Like</button>
-        			       </a>
-				             <a href="{% url 'change_disliked' operation='add' id=shop.id %}">
-        			       <button type="Dislike" class="btn btn-danger">Dislike</button>
-        			       </a>
-		            {%endif%}
-
-             {% endif%}
-
-            {% endfor %}
-
-           </ul>
-          {% else %}
-            <p>There are no shops in the catalog.</p>
-          {% endif %}
-
-          <p>You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.</p>
-   </div>
-     <script>
-        new Vue({
-        delimiters: ['[[', ']]'],
-        el: '#Shops_app',
-        data: {
-        title: 'Welcome to Local Shops Home'
-              }
-                })
-     </script>
+<!-- extenssion of the home page to display the ordred Nerby Shops list (shop_order) by distance from the User location and don't display the preferred_list of Shops, the button to add shop to  preferred_list by calling change_preferred with operation 'add', and the button to add shop to disliked_list by calling change_disliked with operation 'add'  -->
 
 
+
+ <div>
+   <title><h1><font color="blue"><b> Local Shops </b></font></h1></title>
+     {% if shop_order %}
+     <p>
+      <ul>
+      {% for shop in shop_order %}
+        {% if not shop in preferred_list %}
+        <div class="container">
+         <li>
+          {% load staticfiles %}
+          {{shop.name}}<br>
+          <img src="{{shop.shop_pic}}" width ="240">
+          <a href="{% url 'change_preferred' operation='add' id=shop.id %}">
+          <button id="like_button" type="like" class="btn btn-success">Like</button>
+          </a>
+          <a href="{% url 'change_disliked' operation='add' id=shop.id %}">
+          <button id="dislike_button" type="Dislike" class="btn btn-danger">Dislike</button>
+          </a>
+         </li>
+        </div>
+        {% endif%}
+      {% endfor %}
+     </ul>
+    </p>
+    {% else %}
+      <p>There are no shops in the catalog.</p>
+    {% endif %}
+  </div>
 {% endblock %}
-</div>
-</div>

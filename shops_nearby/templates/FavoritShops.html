@@ -1,17 +1,25 @@
 {% extends "base_generic.html" %}
-
 {% block content %}
-            <h1><em><font color="blue"><b>Preferred Shops</b></font></em></h1>
+
+
+<!-- extenssion of the home page to display the preferred Nerby Shops list (preferred_list) by distance from the User location, and the button to remove shop from preferred_list by calling change_preferred with operation 'remove'  -->
+
+
+
+
      {% if user.is_authenticated %}
         {% if preferred_list %}
           {% for shop in preferred_list %}
+          <div class="fav_container">
             <li>
                 {% load staticfiles %}
-                <a><img src="{{shop.shop_pic}}"></a> ({{shop.name}}) ({{shop.email}})
-            </li>
+                 {{shop.name}}<br>
+                <a><img src="{{shop.shop_pic}}" width="240px"></a>
               <a href="{% url 'change_preferred' operation='remove' id=shop.id %}">
-                <button type="button" class="btn btn-danger">Remove</button>
+                <button id="rem_fav_batton" type="button" class="btn btn-danger">Remove</button>
               </a>
+            </li>
+          </div>
           {% endfor %}
         {% else %}
             <p>There are no shops in the preferred shops.</p>

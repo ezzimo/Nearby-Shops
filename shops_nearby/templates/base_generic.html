@@ -4,66 +4,132 @@
 <head>
 
   {% block title %}<title>Local Shops</title>{% endblock %}
+  {% load static %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://unpkg.com/vue"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{api_key}}&libraries=places&callback=onLoaded" async defer></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <!-- additional CSS style for the Nearby Shops home page -->
+  <style media="screen" type="text/css">
+  .col-sm-2 {
+  margin:0;
+  padding:0;
+  }
+  .col-sm-2 li {
+  display:block;
+  float:left;
+  padding:0 10px;
+  }
 
-  <!-- Add additional CSS in static file -->
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  .container {
+  width: 270px;
+  padding-left:10px;
+  padding-right: 10px;
+  box-sizing: border-box;
+  margin: 10px;
+  line-height: 2;
+  text-align: center;
+  display: inline-block;
+  }
+  .dis_container{
+    width: 270px;
+    padding-left:10px;
+    padding-right: 10px;
+    box-sizing: border-box;
+    margin: 10px;
+    line-height: 2;
+    text-align: center;
+    display: inline-block;
+    }
+  .fav_container {
+    width: 270px;
+    padding-left:10px;
+    padding-right: 10px;
+    box-sizing: border-box;
+    margin: 10px;
+    line-height: 2;
+    text-align: center;
+    display: inline-block;
+    }
+  .container li {
+  width: 260px;
+  box-sizing: border-box;
+  margin: 10px;
+  line-height: 2;
+  text-align: center;
+  display: inline-block;
+  border-radius: 30px;
+  border: 5px solid #111;
+  box-shadow: 15px 15px 7px #999999;
+  border-bottom-right-radius: 15px;
+  border-radius:25px;
+  border-style:outset;
+  }
+  .fav_container li {
+    width: 260px;
+    box-sizing: border-box;
+    margin: 10px;
+    line-height: 2;
+    text-align: center;
+    display: inline-block;
+    border-radius: 30px;
+    border: 5px solid #111;
+    box-shadow: 15px 15px 7px #999999;
+    border-bottom-right-radius: 15px;
+    border-radius:25px;
+    border-style:outset;
+    }
+  .dis_container li {
+    width: 260px;
+    box-sizing: border-box;
+    margin: 10px;
+    line-height: 2;
+    text-align: center;
+    display: inline-block;
+    border-radius: 30px;
+    border: 5px solid #111;
+    box-shadow: 15px 15px 7px #999999;
+    border-bottom-right-radius: 15px;
+    border-radius:25px;
+    border-style:outset;
+    }
+  #dislike_button, #remove_button, #rem_fav_batton, #like_button {
+  margin: 10px;
+  color: #333;
+  box-shadow: 3px 3px black, -1px 1px black , -1px 1px black;
+  border: 2px solid black;
+  }
+  </style>
+
 </head>
 
 <body>
 
   <div class="container-fluid">
-
-    <div class="row">
       <div class="col-sm-2">
          {% block sidebar %}
            <ul class="sidebar-nav">
-           <li><a href="{% url 'home' %}">Home</a></li>
            {% if user.is_authenticated %}
-              <li>User: {{ user.first_name }}</li>
-              <li>User location {{ ref_location }}</li>
-              <li><a href="{% url 'favorites'%}?next={{request.path}}">My Preferred Shops</a></li>
-              <li><a href="{% url 'dislikes'%}?next={{request.path}}">My Disliked Shops</a></li>
-              <li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
+            <li><a href="{% url 'home' %}">Nearby Shops</a>
+              <a href="{% url 'favorites'%}?next={{request.path}}">My Preferred Shops</a>
+              <a href="{% url 'dislikes'%}?next={{request.path}}">My Disliked Shops</a>
+              <a href="{% url 'logout'%}?next={{request.path}}">Logout</a>
+            </li>
            {% else %}
               <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
               <li><a  href="{% url 'signup' %}?next={{request.path}}">Signup</a></li>
            {% endif %}
-
            </ul>
          {% endblock %}
       </div>
+      <br><br><br>
     <div class="col-sm-10 ">
       {% block content %}
       {% endblock %}
-
-{% block pagination %}
-  {% if is_paginated %}
-      <div class="pagination">
-          <span class="page-links">
-              {% if page_obj.has_previous %}
-                  <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
-              {% endif %}
-              <span class="page-current">
-                  Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-              </span>
-              {% if page_obj.has_next %}
-                  <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
-              {% endif %}
-          </span>
-      </div>
-  {% endif %}
-{% endblock %}
-      </div>
     </div>
-
-  </div>
+    </div>
 </body>
 </html>
-<script src="https://maps.googleapis.com/maps/api/js?key={{api_key}}&libraries=places&callback=onLoaded" async defer></script>
