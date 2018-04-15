@@ -6,16 +6,22 @@ from .models import Shop
 from .views import home
 from django.contrib.gis.db import models as gis_models
 from django.contrib.gis import geos
+from floppyforms.gis import PointWidget, BaseGMapWidget
 
 # Register your models here.
 
 
+class CustomPointWidget(PointWidget, BaseGMapWidget):
+    class Media:
+        js = ('/static/floppyforms/js/MapWidget.js',)
 
 
 @admin.register(User)
 class UserAdmin(DjangoUserAdmin):
     """Define admin model for custom User model with no email field."""
-
+    widgets = {
+            'maplocation': CustomPointWidget()
+        }
     fieldsets = (
         (None, {'fields': ('email', 'location', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'maplocation')}),
@@ -32,6 +38,7 @@ class UserAdmin(DjangoUserAdmin):
     list_display = ('email', 'first_name', 'last_name', 'location', 'maplocation', 'is_staff')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
+
 
 #admin.site.register(Shop)
 

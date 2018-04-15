@@ -5,11 +5,8 @@
 <!-- extenssion of the home page to display the ordred Nerby Shops list (shop_order) by distance from the User location and don't display the preferred_list of Shops, the button to add shop to  preferred_list by calling change_preferred with operation 'add', and the button to add shop to disliked_list by calling change_disliked with operation 'add'  -->
 
 
-
- <div>
-   <title><h1><font color="blue"><b> Local Shops </b></font></h1></title>
+   <title> Local Shops </title>
      {% if shop_order %}
-     <p>
       <ul>
       {% for shop in shop_order %}
         {% if not shop in preferred_list %}
@@ -29,9 +26,7 @@
         {% endif%}
       {% endfor %}
      </ul>
-    </p>
     {% else %}
       <p>There are no shops in the catalog.</p>
     {% endif %}
-  </div>
 {% endblock %}

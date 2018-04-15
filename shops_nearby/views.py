@@ -17,11 +17,11 @@ def home(request):
     """
     View function for home page of site.
     """
-    shop_list = Shop.objects.all()
-    user = User.objects.get(email=request.user)
-    preferred_list = user.preferred.all()
-    disliked_list = user.disliked.all()
-    ref_location = user.maplocation
+    shop_list = Shop.objects.all() # get all the shops from db to shop_list
+    user = User.objects.get(email=request.user) # get the email of the current user
+    preferred_list = user.preferred.all() #get all the preferred shops for the current user
+    disliked_list = user.disliked.all() #get all the disliked shops for the current user in disliked_list
+    ref_location = user.maplocation # get the coordinates of the user from maplocation to ref_location
     shop_order = Shop.objects.annotate(distance=D('location', ref_location)).order_by('distance')
 
     # Number of visits to this view, as counted in the session variable.
@@ -63,6 +63,9 @@ def dislikes(request):
 
 
 def change_preferred(request, operation, id):
+    """
+    add or remove shop from preferred list of shops
+    """
     shop = Shop.objects.get(id=id)
     if operation == 'add':
         User.make_preferred(request.user, shop)
@@ -72,6 +75,9 @@ def change_preferred(request, operation, id):
         return redirect('favorites')
 
 def change_disliked(request, operation, id):
+    """
+    add or remove shop from disliked list of shops
+    """
     shop = Shop.objects.get(id=id)
     if operation == 'add':
         User.make_dislike(request.user, shop)
