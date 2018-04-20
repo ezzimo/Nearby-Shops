@@ -1,5 +1,6 @@
 from .models import Shop, User
 from .forms import SignUpForm
+from .serializers import ShopSerializer, UserSerializer
 from django.views import generic
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -10,10 +11,21 @@ from django.contrib.gis.db.models.functions import Distance as D
 from django.contrib.gis.geos import Point
 from django.shortcuts import render, redirect
 from django.contrib.gis.geos import *
+from rest_framework.views import APIView, exception_handler
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
+from rest_framework.decorators import api_view
+import json
+from django.http import JsonResponse, HttpResponse
+from django.forms.models import model_to_dict
+from rest_framework import status
+
+
 
 # Create your views here.
 @login_required
-def home(request):
+@api_view(['GET', 'PUT', 'DELETE'])
+def home(request, format=None):
     """
     View function for home page of site.
     """
@@ -22,46 +34,34 @@ def home(request):
     preferred_list = user.preferred.all() #get all the preferred shops for the current user
     disliked_list = user.disliked.all() #get all the disliked shops for the current user in disliked_list
     ref_location = user.maplocation # get the coordinates of the user from maplocation to ref_location
-    shop_order = Shop.objects.annotate(distance=D('location', ref_location)).order_by('distance')
+    shop_order = Shop.objects.annotate(distance=D('location', ref_location)).order_by('distance')     # Render the HTML template home.html with the data in the context variable
+    return Response({'shop_order': ShopSerializer(shop_order,many=True).data,'disliked_list': ShopSerializer(disliked_list,many=True).data, 'preferred_list': ShopSerializer(preferred_list,many=True).data},)
 
-    # Number of visits to this view, as counted in the session variable.
-    num_visits=request.session.get('num_visits', 0)
-    request.session['num_visits'] = num_visits+1
-    # Render the HTML template home.html with the data in the context variable
-    return render(
-        request,
-        'home.html',
-        context={'num_visits':num_visits, 'shop_list':shop_list, 'preferred_list': preferred_list, 'disliked_list': disliked_list, 'shop_order': shop_order, 'ref_location': ref_location},
-    )
 
 @login_required
-def favorites(request):
+@api_view(['GET', 'PUT', 'DELETE'])
+def favorites(request, format=None):
     """
     View of the preferred shop list
     """
     user = User.objects.get(email=request.user)
     preferred_list = user.preferred.all()
-    return render(
-        request,
-        'FavoritShops.html',
-        context={'preferred_list': preferred_list},
+    return Response({'preferred_list': ShopSerializer(preferred_list,many=True).data},
     )
 
 @login_required
-def dislikes(request):
+@api_view(['GET', 'PUT', 'DELETE'])
+def dislikes(request, format=None):
     """
     View of the disliked shop list
     """
     user = User.objects.get(email=request.user)
     disliked_list = user.disliked.all()
-    return render(
-        request,
-        'DislikedSops.html',
-        context={'disliked_list': disliked_list},
+    return Response({'disliked_list': ShopSerializer(disliked_list,many=True).data},
     )
 
 
-
+@api_view(['GET', 'PUT', 'DELETE'])
 def change_preferred(request, operation, id):
     """
     add or remove shop from preferred list of shops
@@ -74,6 +74,7 @@ def change_preferred(request, operation, id):
         User.remove_preferred(request.user, shop)
         return redirect('favorites')
 
+@api_view(['GET', 'PUT', 'DELETE'])
 def change_disliked(request, operation, id):
     """
     add or remove shop from disliked list of shops
@@ -87,7 +88,7 @@ def change_disliked(request, operation, id):
         return redirect('home')
 
 
-
+@api_view(['GET', 'POST'])
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -100,4 +101,4 @@ def signup(request):
             return redirect('/shops_nearby')
     else:
         form = SignUpForm()
-    return render(request, 'signup.html', {'form': form})
+    return Response(request, 'signup.html', {'form': UserSerializer(form,many=True).data})
